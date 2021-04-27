@@ -35,6 +35,7 @@ class Decoder:
             self.q.put(bytes(indata))
 
     def run(self):
+        print("listening")
         with sd.RawInputStream(samplerate=self.samplerate, blocksize = 16000, device=self.device,
                         dtype='int16',channels=1, callback=self.callback):
             while True:

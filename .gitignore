@@ -3,3 +3,4 @@
 tools/model/*
 tests/voice_synth_tests/model
 *.pyc
+/temp/*

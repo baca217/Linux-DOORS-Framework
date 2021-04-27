@@ -21,25 +21,20 @@ def main():
     voice = vs.VoiceSynth()
     decoder = om.Decoder()
     classes = ml.class_builder()
-    info = {"path" : pathlib.Path(__file__).parent.absolute()}
+    info = {"path" : str(pathlib.Path(__file__).parent.absolute())}
     os.system("clear") #clearing out text from vosk intialization
-    menu = ("enter \"reuse\" to use previous recording\n"
-            "enter \"r\" to record for 10 seconds\n"
-            "enter \"test\" to enter the testing menu\n"
-            "enter \"exit\" to exit the program: ")
 
     while True:
         sent = decoder.run()
         msg, func, mod = sk.compare_command(sent, classes, info)
+        run_results(msg, func, mod, classes, voice)
 
 def run_results(msg, func, mod, classes, voice):
     print(msg)
-    voice.sendToFront(msg)
     if func: #we got a func back
         if mod in classes.keys(): #classes funcs should manipulate themselves
             func(classes[mod])
         else:
-            time.sleep(2)
             func()
 
 def local(): #function for recording and testing locally

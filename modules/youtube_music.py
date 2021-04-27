@@ -12,6 +12,7 @@ import os
 import socket
 import sys
 import time
+import wave
 
 '''
 FUNCTION: download_song
@@ -31,9 +32,6 @@ def download_song(songName, info):
     result = (videosSearch.result())
     try:
         video = pafy.new(result["result"][0]["link"])
-    except KeyError: #for some reason like counts breaks the program
-        pass
-    try: #remove the youtube holder song when possible
         os.system("rm {}/temp/yt_song.wav".format(info["path"]))
     except:
         pass
@@ -41,7 +39,6 @@ def download_song(songName, info):
     convert = "ffmpeg -i \"{}\" -ar 16000 -ac 1 "+"{}/temp/yt_song.wav".format(info["path"]) #downsampling command 
 
     ydl_opts = { #downloads options for youtube dl
-            "outmpl": "temp/yt_temp.wav",
             "format": "bestaudio/best",
             "postprocessors": [{
                 "key": "FFmpegExtractAudio",
@@ -49,29 +46,23 @@ def download_song(songName, info):
                 "preferredquality": "192",
                 }],
             }
-
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url]) #downloading video using youtube-dl
-    
-    files = glob.glob("{}/*.wav".format(info["path"])) #getting the latest wave file
+    files = glob.glob(info["path"]+"/*.wav")
     latest = max(files, key=os.path.getctime)
-
-    os.system(convert.format(latest))
-    os.system("rm \'"+latest+"\'")
+    os.system("mv '{}' '{}/temp/yt_song.wav'".format(latest, info["path"]))
     def call_play():
-        play_song()
+        play_song(info)
     return call_play
     
 def play_song(info):
-    if not mixer.get_init():
-        mixer.init(16000, -16, 1)
-    mixer.music.load("{}/temp/yt_song.wav".format(info["path"]))
-    mixer.music.play()
-
-    input("wait")
-
-    mixer.music.stop()
-
+    songPath = "{}/temp/yt_song.wav".format(info["path"])
+    with wave.open(songPath, "rb") as wf:
+        framerate = wf.getframerate()
+        if not mixer.get_init():
+            mixer.init(framerate, -16, 1)
+        mixer.music.load(songPath)
+        mixer.music.play()
 
 '''
 FUNCTION: command_format

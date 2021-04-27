@@ -1,4 +1,4 @@
-MODEL="/modules/model"
+MODEL="/tools/model"
 CURDIR=`pwd`
 if [ -d "$CURDIR$MODEL" ] 
 then
