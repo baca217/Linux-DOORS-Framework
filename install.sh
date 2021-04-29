@@ -33,6 +33,7 @@ pip3 install tinytag #music tag detection
 pip3 install python-kasa --pre #for hs103 smartplug
 pip3 install pytz
 pip3 install sounddevice #for open mic
+pip3 install colour #for color support on the flex bulb
 sudo apt-get update
 sudo apt-get install espeak #for generating voice synth file
 sudo apt-get install libgfortran5 #for some linux distros neading audio support

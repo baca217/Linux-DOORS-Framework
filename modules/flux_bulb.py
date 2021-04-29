@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
-
-#pip install flux_led
 #reference https://github.com/Danielhiversen/flux_led
 
 from parse import *
 import os
 from flux_led import WifiLedBulb, BulbScanner
 from word2number import w2n
+from colour import Color
 
 #still working on the brightness function. Need to worry about querying the color of the lightbulb first,
 #then setting the brightness back
@@ -106,26 +104,16 @@ def commands():
         ]
     return coms, classify
 
-def colorChanger(bulb, color):
-    color = color.replace(" ", "")
+def colorChanger(bulb, hue):
+    hue = hue.replace(" ", "")
     msg = ""
     function = None
-    colors = {
-            "red" : (255,0,0),
-            "orange" : (255,125,0),
-            "yellow" : (255, 255, 0),
-            "springgreen" : (125,255,0),
-            "green" : (0,255,0),
-            "turquoise" : (0,255,125),
-            "cyan" : (0, 255, 255),
-            "ocean" : (0,125,255),
-            "blue" : (0,0,255),
-            "purple" : (125, 0, 255),
-            "magenta" : (255, 0, 255),
-            "raspberry" : (255, 0, 125)
-            }
+
     try:
-        rgb = colors[color]
+        temp = Color(hue).rgb
+        rgb = ()
+        for i in temp:
+            rgb += (int(i * 255),)
     except:
         msg = color+" is not a supported color for flux lightbulb"
         return msg, function
@@ -134,7 +122,7 @@ def colorChanger(bulb, color):
     # set to color and wait
     # (use non-persistent mode to help preserve flash)
     bulb.setRgb(*rgb, persist=False)
-    msg = "going to change flux bulb color to "+color
+    msg = "going to change flux bulb color to {}".format(hue)
     function = None
 
     return msg, function
@@ -146,7 +134,7 @@ def brightnessChanger(bulb, percent):
         if num < 0: #range checking
             msg = "flux brightness must be equal to or more than 0 percent"
         elif num > 1:
-            msg = "flux brightness must be less than or equaL to 100 percent"
+            msg = "flux brightness must be less than or equal to 100 percent"
     except:
         msg = "flux brightness percentage is not a number"
     try:
@@ -155,9 +143,8 @@ def brightnessChanger(bulb, percent):
         msg = "couldn't pull color from flux bulb"
     if msg == None:
         def funct():
-            print(str(num) + " percent")
             bulb.setRgb(r, g, b, persist=False, brightness = int(255 * num))
-        msg = "will change flux brightness to " + str(num) + " percent"
+        msg = "will change flux brightness to " + str(int(num*100)) + " percent"
     else:
         funct = None
     return msg, funct
