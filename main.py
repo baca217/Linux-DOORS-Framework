@@ -5,10 +5,8 @@ sys.path.append('modules')
 
 import open_mic as om
 import sklearn_sims as sk
-#import modules.serial_comm as serial_comm
 import voice_synth as vs
 import module_loader as ml
-from tests.main_tests.main_test import run_tests
 import os #for recording, temporary usage
 import time #for testing
 from pygame import mixer
